@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CLAUDE.md That Works — One File That Makes AI Coding Assistants Behave</title>
+  <meta name="description" content="Stop your AI coding assistant from going rogue. One file, zero dependencies, works with Claude Code and OpenCode. Install in 30 seconds.">
+  <meta name="keywords" content="CLAUDE.md, AI coding assistant, Claude Code, OpenCode, AI guardrails, prompt engineering, coding discipline">
+  <meta name="author" content="Zeljko Avramovic">
+  <link rel="canonical" href="https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='80' height='80' x='10' y='10' rx='8' fill='%230d1117' stroke='%2358a6ff' stroke-width='4'/><text x='50' y='62' text-anchor='middle' font-size='36' font-weight='bold' fill='%2358a6ff' font-family='system-ui,sans-serif'>C</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="CLAUDE.md That Works — One File That Makes AI Coding Assistants Behave">
+  <meta property="og:description" content="Stop your AI coding assistant from going rogue. One file, zero dependencies, works with Claude Code and OpenCode. Install in 30 seconds.">
+  <meta property="og:url" content="https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/make-your-ai-coding-assistant-actually-behave.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CLAUDE.md That Works — One File That Makes AI Coding Assistants Behave">
+  <meta name="twitter:description" content="Stop your AI coding assistant from going rogue. One file, zero dependencies, works with Claude Code and OpenCode. Install in 30 seconds.">
+  <meta name="twitter:image" content="https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/make-your-ai-coding-assistant-actually-behave.png">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "CLAUDE.md That Works",
+    "description": "A single-file behavioral framework that makes AI coding assistants disciplined, predictable, and safe. Zero dependencies. Drop-in installation.",
+    "url": "https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic",
+    "author": {
+      "@type": "Person",
+      "name": "Zeljko Avramovic",
+      "url": "https://github.com/zeljkoavramovic"
+    },
+    "license": "https://opensource.org/licenses/MIT",
+    "programmingLanguage": "Markdown",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <style>
+    /* === RESET & BASE === */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #060a16;
+      --bg-elevated: #0b1120;
+      --card: #162036;
+      --border: #243048;
+      --text: #c9d5e3;
+      --text-muted: #9eaab6;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+      --green: #3fb950;
+      --green-muted: #238636;
+      --red: #f85149;
+      --red-muted: rgba(248, 81, 73, 0.15);
+      --orange: #d29922;
+      --purple: #bc8cff;
+      --radius: 8px;
+      --radius-lg: 12px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+      --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+      --transition: 200ms cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fade-in { opacity: 1 !important; transform: none !important; }
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color var(--transition); }
+    a:hover { color: var(--accent-hover); }
+
+    /* === FIXED SIDENAV === */
+    .sidenav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 220px;
+      z-index: 100;
+      background: rgba(8, 12, 26, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-right: 1px solid var(--border);
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .sidenav-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: clamp(12px, 0.85vw, 14px);
+      color: #f0f6fc;
+      text-decoration: none;
+      white-space: nowrap;
+      line-height: 1.2;
+      padding: 12px 12px 20px;
+      flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .sidenav-links {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      overflow-y: auto;
+      scrollbar-width: none;
+    }
+    .sidenav-links::-webkit-scrollbar { display: none; }
+    .sidenav-links a {
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 10px 20px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color var(--transition), background var(--transition);
+    }
+    .sidenav-links a svg { flex-shrink: 0; opacity: 0.7; }
+    .sidenav-links a:hover svg { opacity: 1; }
+    .sidenav-links a.active svg { opacity: 1; }
+    .sidenav-links a:hover { color: #f0f6fc; background: var(--card); }
+    .sidenav-links a.active { color: var(--accent); background: rgba(88, 166, 255, 0.12); }
+    .sidenav-toggle {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px;
+      flex-shrink: 0;
+      z-index: 101;
+    }
+    .sidenav-toggle svg { display: block; }
+    .sidenav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 99;
+    }
+    .sidenav-overlay.open { display: block; }
+
+    body { padding-left: 220px; }
+
+    @media (max-width: 768px) {
+      .sidenav {
+        width: 260px;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+        padding-top: 16px;
+      }
+      .sidenav.open { transform: translateX(0); }
+      .sidenav-toggle {
+        display: block;
+        position: fixed;
+        top: 12px;
+        left: 12px;
+      }
+      body { padding-left: 0; }
+    }
+
+    /* === FEATURE SPACER === */
+    .feature-spacer {
+      grid-column: 1 / -1;
+      height: 16px;
+    }
+
+    /* === LAYOUT === */
+    .container {
+      width: 100%;
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 80px 0; }
+    .trust { padding: 64px 0; }
+    .how { padding: 96px 0; }
+    .features { padding: 64px 0; }
+    .compare-table-section { padding: 64px 0; }
+    .faq { padding: 96px 0; }
+
+    @media (max-width: 768px) {
+      section { padding: 56px 0; }
+      .how { padding: 64px 0; }
+      .faq { padding: 64px 0; }
+      .container { padding: 0 16px; }
+    }
+
+    /* === FADE-IN ANIMATION === */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* === HERO (Step 1: Stop the Scroll) === */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 80px 0 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(88, 166, 255, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -100px;
+      left: -100px;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(63, 185, 80, 0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; }
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .hero-badge svg { flex-shrink: 0; }
+
+    .hero h1 {
+      font-size: clamp(2.25rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #f0f6fc;
+      margin-bottom: 20px;
+    }
+    .hero h1 .wrap-unit {
+      display: inline-block;
+    }
+
+    .hero-sub {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      color: var(--text-muted);
+      max-width: 480px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-sub { margin-left: auto; margin-right: auto; }
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-cta { justify-content: center; }
+    }
+
+    /* === BUTTONS === */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-weight: 600;
+      font-family: var(--font);
+      border: none;
+      cursor: pointer;
+      transition: background var(--transition), transform 100ms cubic-bezier(0.25, 1, 0.5, 1), box-shadow var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:active { transform: scale(0.98); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d1117;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      color: #0d1117;
+      box-shadow: 0 0 20px rgba(88, 166, 255, 0.3);
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+      color: #f0f6fc;
+      border-color: var(--text-muted);
+    }
+
+    /* === INSTALL BLOCK === */
+    .install-block {
+      max-width: 560px;
+      border-radius: 10px;
+    }
+
+    @keyframes highlight-pulse {
+      0%   { box-shadow: 0 0 12px 8px rgba(229, 62, 62, 0.55); }
+      100% { box-shadow: 0 0 12px 8px rgba(229, 62, 62, 0); }
+    }
+
+    .install-block.highlight {
+      animation: highlight-pulse 3s ease-out forwards;
+    }
+
+    @media (max-width: 1024px) {
+      .install-block { margin: 0 auto; }
+    }
+
+    .install-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .install-note {
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 400;
+      font-size: 11px;
+      opacity: 0.8;
+    }
+
+    .install-note code {
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 3px;
+      background: rgba(0,0,0,0.08);
+    }
+
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      min-height: 44px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color var(--transition), border-color var(--transition);
+    }
+
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-btn:hover { color: var(--text); }
+
+    .code-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-top: none;
+      border-radius: 0 0 var(--radius) var(--radius);
+      padding: 16px;
+      position: relative;
+    }
+
+    .code-box code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text);
+      display: block;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-family: var(--font);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .copy-btn:hover { background: var(--border); color: var(--text); }
+    .copy-btn.copied { color: var(--green); border-color: var(--green-muted); }
+
+    /* === HERO SVG === */
+    .hero-visual { display: flex; justify-content: center; align-items: center; }
+
+    @media (max-width: 1024px) {
+      .hero-visual { order: -1; }
+      .hero-visual svg { width: 100%; max-width: 340px; height: auto; }
+    }
+
+    /* === TRUST (Step 2: Earn Trust) === */
+    .trust {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-elevated);
+    }
+
+    .trust-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: #f0f6fc;
+      letter-spacing: -0.01em;
+    }
+
+    .section-subtitle {
+      max-width: 72ch;
+      margin: 8px auto 0;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .flow-diagram {
+      max-width: 800px;
+      margin: 0 auto 48px;
+    }
+
+    .flow-diagram svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .trust-meta {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .trust-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .works-with {
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .works-with-title {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .works-grid {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .works-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .works-item svg { flex-shrink: 0; }
+
+    /* === PROBLEM (Step 3: Explain Value - Problem) === */
+    .problem-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .problem-item {
+      display: flex;
+      gap: 16px;
+      padding: 14px 20px;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--transition);
+    }
+
+    .problem-item:last-child { border-bottom: none; }
+
+    .problem-item:nth-child(odd) {
+      background: var(--card);
+      border-radius: 0;
+    }
+
+    .problem-item:nth-child(even) {
+      border: 1px solid var(--border);
+      border-radius: 0;
+    }
+
+    .problem-item:first-child {
+      border-radius: var(--radius) var(--radius) 0 0;
+    }
+
+    .problem-item:last-child {
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .problem-item:nth-child(odd):last-child {
+      border-radius: 0 0 var(--radius) var(--radius);
+    }
+
+    .problem-num {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      background: var(--red-muted);
+      border-radius: 6px;
+      margin-top: 1px;
+    }
+
+    .problem-item:nth-child(odd) .problem-num {
+      background: rgba(248, 81, 73, 0.2);
+    }
+
+    .problem-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    /* === HOW IT WORKS (Step 3: Explain Value - Principles) === */
+    .how { background: var(--bg-elevated); }
+    .how-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .principles-grid { grid-template-columns: 1fr; }
+    }
+
+    .principle-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+
+    .principle-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .principle-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(88, 166, 255, 0.1);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+
+    .principle-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: #f0f6fc;
+      margin-bottom: 8px;
+    }
+
+    .principle-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* === FEATURES (Step 3: Explain Value - Highlights) === */
+    .features-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .features-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .features-list { grid-template-columns: 1fr; }
+    }
+
+    .feature-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 20px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: border-color var(--transition);
+    }
+
+    .feature-item.featured {
+      grid-column: span 1;
+      padding: 24px;
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.04);
+    }
+
+    @media (max-width: 768px) {
+      .feature-item.featured { grid-column: span 1; }
+    }
+
+    .feature-item:hover { border-color: var(--accent); }
+
+    .feature-category {
+      grid-column: 1 / -1;
+      background: var(--card);
+      padding: 12px 18px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent);
+      border-left: 3px solid var(--accent);
+      margin-top: 8px;
+    }
+
+    .feature-category:first-child {
+      margin-top: 0;
+    }
+
+    .feature-check {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      color: var(--green);
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #f0f6fc;
+      margin-bottom: 4px;
+    }
+
+    .feature-item.featured .feature-title {
+      font-size: 15px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* === BEFORE/AFTER (Step 3: Explain Value - Comparison) === */
+    .compare { background: var(--bg-elevated); }
+    .compare-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .compare-grid { grid-template-columns: 1fr; }
+    }
+
+    .compare-panel {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    .compare-panel-header {
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compare-bad .compare-panel-header {
+      background: var(--red-muted);
+      color: var(--red);
+    }
+
+    .compare-good .compare-panel-header {
+      background: rgba(63, 185, 80, 0.1);
+      color: var(--green);
+    }
+
+    .compare-body {
+      padding: 20px;
+      background: var(--card);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .compare-line {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .compare-line .comment { color: var(--text-muted); }
+    .compare-bad .compare-line .action { color: var(--red); }
+    .compare-good .compare-line .action { color: var(--green); }
+
+    /* === FAQ (Step 4: Remove Doubt) === */
+    .faq-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .faq-list {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      text-align: left;
+      padding: 20px 0;
+      font-family: var(--font);
+      font-size: 16px;
+      font-weight: 600;
+      color: #f0f6fc;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: color var(--transition);
+    }
+
+    .faq-question:hover { color: var(--accent); }
+
+    .faq-chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+    }
+
+    .faq-item.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s cubic-bezier(0.25, 1, 0.5, 1), padding 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding-bottom: 20px;
+    }
+
+    .faq-answer p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* === COMPARISON TABLE === */
+
+    .table-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .compare-table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      position: relative;
+    }
+
+    @media (max-width: 768px) {
+      .compare-table-wrap::after {
+        content: '';
+        position: sticky;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        width: 32px;
+        min-height: 100%;
+        background: linear-gradient(to right, transparent, var(--bg) 80%);
+        pointer-events: none;
+        float: right;
+      }
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .compare-table th,
+    .compare-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .compare-table th {
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .compare-table th:last-child {
+      color: var(--accent);
+    }
+
+    .compare-table td { color: var(--text); }
+
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .compare-table tr:hover td { background: var(--card); }
+
+    .table-check { color: var(--green); font-weight: bold; }
+    .table-cross { color: var(--text-muted); }
+    .table-partial { color: var(--orange); font-style: italic; }
+
+    /* === AGNOSTIC TABLE === */
+    .agnostic { background: var(--bg-elevated); }
+    .agnostic-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .agnostic-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .agnostic-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .agnostic-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agnostic-check {
+      flex-shrink: 0;
+      color: var(--green);
+    }
+
+    .agnostic-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .agnostic-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    /* === CTA (Step 5: Make the Ask) === */
+    .cta-section {
+      text-align: center;
+      border-top: 1px solid var(--border);
+      background: var(--bg-elevated);
+    }
+
+    .cta-title {
+      font-size: clamp(1.5rem, 3vw, 2.25rem);
+      font-weight: 800;
+      color: #f0f6fc;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .cta-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .cta-related {
+      margin-bottom: 40px;
+      padding: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .cta-related-title {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .cta-related-link {
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .cta-related-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .support-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .support-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: color var(--transition);
+    }
+
+    .support-link:hover { color: var(--text); }
+
+    .credits {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .credits a { font-weight: 500; }
+
+    /* === FOOTER === */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <button class="sidenav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="sidenav-overlay"></div>
+  <nav class="sidenav" role="navigation" aria-label="Page sections">
+    <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic" target="_blank" rel="noopener" class="sidenav-brand">CLAUDE.md That Works</a>
+    <div class="sidenav-links">
+      <a href="#hero"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+      <a href="#trust"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 22h20V10H2v12z"/><path d="M6 10V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4"/><line x1="12" y1="6" x2="12" y2="2"/><path d="M9 16l3-3 3 3"/></svg>How It Comes Together</a>
+      <a href="#problem"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>The Problem</a>
+      <a href="#how"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M8 13.5a6 6 0 1 1 8 0c-.9.8-1.6 1.7-1.9 2.5H9.9c-.3-.8-1-1.7-1.9-2.5Z"/><path d="M12 2v2.5"/><path d="M6.8 4.2 8 6"/><path d="M17.2 4.2 16 6"/><path d="M3.5 9.5H6"/><path d="M18 9.5h2.5"/><path d="M4.8 15 6.7 13.9"/><path d="M19.2 15 17.3 13.9"/></svg>Principles</a>
+      <a href="#features"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>Features</a>
+      <a href="#compare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>Example</a>
+      <a href="#comparison"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Comparison</a>
+      <a href="#agnostic"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Agnostic</a>
+      <a href="#faq"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>FAQ</a>
+      <a href="#cta"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Get Started</a>
+    </div>
+  </nav>
+
+  <!-- ===== HERO (Step 1: Stop the Scroll) ===== -->
+  <header class="hero" id="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-content fade-in">
+          <div class="hero-badge">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM0 8a8 8 0 1116 0A8 8 0 010 8z" fill="currentColor"/><path d="M8 4a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 018 4zm0 8a1 1 0 100-2 1 1 0 000 2z" fill="currentColor"/></svg>
+            Open source, MIT licensed
+          </div>
+          <h1>CLAUDE.md<span class="wrap-unit"> That Works</span></h1>
+          <p class="hero-sub">One file. Zero dependencies. Discipline every AI coding session.</p>
+          <div class="hero-cta">
+            <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic" class="btn btn-primary" target="_blank" rel="noopener">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+              Get the file
+            </a>
+            <a href="#install" class="btn btn-secondary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Install now
+            </a>
+          </div>
+          <div class="install-block" id="install">
+            <div class="install-label">Install in 30 seconds<span class="install-note"> (existing file backed up to <code>CLAUDE.backup.md</code>)</span></div>
+            <div class="tab-bar">
+              <button class="tab-btn active" data-tab="powershell" aria-pressed="true">Windows (PowerShell)</button>
+              <button class="tab-btn" data-tab="bash" aria-pressed="false">Linux / macOS</button>
+            </div>
+            <div class="code-box">
+              <button class="copy-btn" aria-label="Copy install command">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                <span>Copy</span>
+              </button>
+              <code id="install-ps">mkdir -Force "$HOME\.claude" > $null; cp "$HOME\.claude\CLAUDE.md" "$HOME\.claude\CLAUDE.backup.md" 2>$null; iwr "https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md" -OutFile "$HOME\.claude\CLAUDE.md"</code>
+              <code id="install-bash" style="display:none">mkdir -p ~/.claude; cp ~/.claude/CLAUDE.md ~/.claude/CLAUDE.backup.md 2>/dev/null; curl -fsSL https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md -o ~/.claude/CLAUDE.md</code>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual fade-in" aria-label="Illustration: AI assistant chaos transformed into order">
+          <svg width="440" height="360" viewBox="0 0 440 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Chaos side (left) -->
+            <rect x="10" y="30" width="190" height="300" rx="12" fill="#162036" stroke="#243048" stroke-width="1.5"/>
+            <text x="105" y="22" text-anchor="middle" fill="#f85149" font-family="system-ui,sans-serif" font-size="11" font-weight="700">WITHOUT</text>
+            <!-- Chaotic lines -->
+            <rect x="28" y="52" width="80" height="8" rx="4" fill="#f85149" opacity="0.6"/>
+            <rect x="28" y="70" width="140" height="6" rx="3" fill="#8b949e" opacity="0.3"/>
+            <rect x="28" y="84" width="120" height="6" rx="3" fill="#8b949e" opacity="0.3"/>
+            <rect x="28" y="98" width="100" height="6" rx="3" fill="#8b949e" opacity="0.3"/>
+            <rect x="28" y="116" width="155" height="6" rx="3" fill="#f85149" opacity="0.2"/>
+            <rect x="28" y="130" width="130" height="6" rx="3" fill="#f85149" opacity="0.15"/>
+            <rect x="28" y="144" width="90" height="6" rx="3" fill="#f85149" opacity="0.2"/>
+            <rect x="28" y="162" width="60" height="24" rx="4" fill="#f85149" opacity="0.15"/>
+            <rect x="96" y="162" width="70" height="24" rx="4" fill="#f85149" opacity="0.1"/>
+            <rect x="28" y="198" width="155" height="6" rx="3" fill="#8b949e" opacity="0.2"/>
+            <rect x="28" y="212" width="100" height="6" rx="3" fill="#f85149" opacity="0.15"/>
+            <!-- Warning icons -->
+            <circle cx="168" y="54" r="10" fill="rgba(248,81,73,0.15)" stroke="#f85149" stroke-width="1"/>
+            <text x="168" y="58" text-anchor="middle" fill="#f85149" font-family="system-ui,sans-serif" font-size="12" font-weight="bold">!</text>
+            <circle cx="168" y="118" r="10" fill="rgba(248,81,73,0.15)" stroke="#f85149" stroke-width="1"/>
+            <text x="168" y="122" text-anchor="middle" fill="#f85149" font-family="system-ui,sans-serif" font-size="12" font-weight="bold">!</text>
+            <!-- Scattered elements -->
+            <rect x="40" y="232" width="40" height="40" rx="4" fill="#f85149" opacity="0.08" stroke="#f85149" stroke-width="0.5"/>
+            <rect x="88" y="240" width="50" height="30" rx="4" fill="#f85149" opacity="0.06" stroke="#f85149" stroke-width="0.5"/>
+            <rect x="148" y="228" width="30" height="50" rx="4" fill="#f85149" opacity="0.08" stroke="#f85149" stroke-width="0.5"/>
+            <rect x="28" y="284" width="160" height="6" rx="3" fill="#f85149" opacity="0.12"/>
+            <rect x="28" y="298" width="120" height="6" rx="3" fill="#f85149" opacity="0.08"/>
+
+            <!-- Arrow -->
+            <g transform="translate(220, 170)">
+              <line x1="-6" y1="0" x2="6" y2="0" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round"/>
+              <polyline points="2,-4 6,0 2,4" fill="none" stroke="#58a6ff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+
+            <!-- Order side (right) -->
+            <rect x="240" y="30" width="190" height="300" rx="12" fill="#162036" stroke="#243048" stroke-width="1.5"/>
+            <text x="335" y="22" text-anchor="middle" fill="#3fb950" font-family="system-ui,sans-serif" font-size="11" font-weight="700">WITH</text>
+            <!-- Ordered lines -->
+            <rect x="258" y="52" width="70" height="8" rx="4" fill="#3fb950" opacity="0.5"/>
+            <rect x="258" y="70" width="155" height="6" rx="3" fill="#c9d1d9" opacity="0.3"/>
+            <rect x="258" y="84" width="140" height="6" rx="3" fill="#c9d1d9" opacity="0.3"/>
+            <rect x="258" y="98" width="100" height="6" rx="3" fill="#c9d1d9" opacity="0.3"/>
+            <rect x="258" y="116" width="60" height="6" rx="3" fill="#3fb950" opacity="0.2"/>
+            <rect x="258" y="130" width="50" height="6" rx="3" fill="#3fb950" opacity="0.15"/>
+            <!-- Clean card -->
+            <rect x="258" y="154" width="155" height="50" rx="6" fill="rgba(63,185,80,0.08)" stroke="#3fb950" stroke-width="0.5"/>
+            <rect x="270" y="168" width="80" height="6" rx="3" fill="#3fb950" opacity="0.4"/>
+            <rect x="270" y="182" width="120" height="6" rx="3" fill="#c9d1d9" opacity="0.2"/>
+            <!-- Checkmarks -->
+            <circle cx="398" y="54" r="10" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1"/>
+            <polyline points="394,54 397,57 403,51" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="398" y="118" r="10" fill="rgba(63,185,80,0.15)" stroke="#3fb950" stroke-width="1"/>
+            <polyline points="394,118 397,121 403,115" fill="none" stroke="#3fb950" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- Ordered blocks -->
+            <rect x="258" y="220" width="155" height="24" rx="4" fill="rgba(63,185,80,0.06)"/>
+            <rect x="270" y="228" width="90" height="8" rx="4" fill="#3fb950" opacity="0.3"/>
+            <rect x="258" y="252" width="155" height="24" rx="4" fill="rgba(63,185,80,0.04)"/>
+            <rect x="270" y="260" width="60" height="8" rx="4" fill="#c9d1d9" opacity="0.2"/>
+            <rect x="258" y="284" width="100" height="6" rx="3" fill="#c9d1d9" opacity="0.2"/>
+            <rect x="258" y="298" width="130" height="6" rx="3" fill="#3fb950" opacity="0.1"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== TRUST (Step 2: Earn Trust) ===== -->
+    <section class="trust" id="trust">
+      <div class="container">
+        <div class="trust-header fade-in">
+          <p class="section-label">How it comes together</p>
+          <h2 class="section-title">Three perspectives, one framework</h2>
+        </div>
+
+        <div class="flow-diagram fade-in">
+          <svg viewBox="0 0 800 480" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flow diagram showing how Karpathy, Bernstein, and Avramovic perspectives converge into CLAUDE.md">
+            <defs>
+              <marker id="arrow-blue" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#58a6ff"/></marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#3fb950"/></marker>
+              <marker id="arrow-purple" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#bc8cff"/></marker>
+            </defs>
+
+            <!-- Arrows — all start from center-bottom of each card (y=250) -->
+            <line x1="145" y1="250" x2="340" y2="360" stroke="#58a6ff" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow-blue)" opacity="0.7"/>
+            <line x1="400" y1="250" x2="400" y2="360" stroke="#bc8cff" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow-purple)" opacity="0.7"/>
+            <line x1="655" y1="250" x2="460" y2="360" stroke="#3fb950" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrow-green)" opacity="0.7"/>
+
+            <!-- Karpathy card — 4 items -->
+            <rect x="20" y="20" width="250" height="237" rx="10" fill="#162036" stroke="#243048" stroke-width="1"/>
+            <rect x="20" y="20" width="250" height="36" rx="10" fill="#58a6ff" opacity="0.12"/>
+            <rect x="20" y="46" width="250" height="10" fill="#58a6ff" opacity="0.12"/>
+            <text x="36" y="45" fill="#58a6ff" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><a href="https://x.com/karpathy/status/2015883857489522876" target="_blank" rel="noopener" fill="#58a6ff" text-decoration="underline">Karpathy</a></text>
+            <text x="36" y="82" fill="#c9d1d9" font-size="11.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><tspan x="36" dy="0">- Think before coding</tspan><tspan x="36" dy="20">- Simplicity first</tspan><tspan x="36" dy="20">- Surgical changes</tspan><tspan x="36" dy="20">- Goal-driven execution</tspan></text>
+
+            <!-- Bernstein card — 5 items -->
+            <rect x="275" y="20" width="250" height="237" rx="10" fill="#162036" stroke="#243048" stroke-width="1"/>
+            <rect x="275" y="20" width="250" height="36" rx="10" fill="#bc8cff" opacity="0.12"/>
+            <rect x="275" y="46" width="250" height="10" fill="#bc8cff" opacity="0.12"/>
+            <text x="291" y="45" fill="#bc8cff" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><a href="https://github.com/ThePassionateProgrammer/knowledge-base-starter" target="_blank" rel="noopener" fill="#bc8cff" text-decoration="underline">Bernstein</a></text>
+            <text x="291" y="82" fill="#c9d1d9" font-size="11.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><tspan x="291" dy="0">- Collaborative framing</tspan><tspan x="291" dy="20">- Refine before building</tspan><tspan x="291" dy="20">- Respect for working code</tspan><tspan x="291" dy="20">- Simplicity without dogma</tspan><tspan x="291" dy="20">- Documentation philosophy</tspan></text>
+
+            <!-- Avramovic card — 9 items, height=237 -->
+            <rect x="530" y="20" width="250" height="237" rx="10" fill="#162036" stroke="#243048" stroke-width="1"/>
+            <rect x="530" y="20" width="250" height="36" rx="10" fill="#3fb950" opacity="0.12"/>
+            <rect x="530" y="46" width="250" height="10" fill="#3fb950" opacity="0.12"/>
+            <text x="546" y="45" fill="#3fb950" font-size="14" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><a href="https://github.com/zeljkoavramovic" target="_blank" rel="noopener" fill="#3fb950" text-decoration="underline">Avramovic</a></text>
+            <text x="546" y="82" fill="#c9d1d9" font-size="11.5" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif"><tspan x="546" dy="0">- Order of precedence</tspan><tspan x="546" dy="20">- Operating modes</tspan><tspan x="546" dy="20">- Must/Should/May semantics</tspan><tspan x="546" dy="20">- Shared vocabulary / interpretation layer</tspan><tspan x="546" dy="20">- Hard stops</tspan><tspan x="546" dy="20">- Verification framework</tspan><tspan x="546" dy="20">- Broken-baseline handling</tspan><tspan x="546" dy="20">- Structured post-task reporting</tspan><tspan x="546" dy="20">- Documentation rules</tspan></text>
+
+            <!-- CLAUDE.md card -->
+            <rect x="225" y="370" width="350" height="90" rx="10" fill="#f0f6fc" stroke="#243048" stroke-width="1"/>
+            <text x="400" y="402" fill="#080c1a" font-size="15" font-weight="700" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">CLAUDE.md</text>
+            <text x="400" y="422" fill="#484f58" font-size="11.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">Unified behavior framework for safer, smaller,</text>
+            <text x="400" y="438" fill="#484f58" font-size="11.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">verifiable AI coding changes</text>
+          </svg>
+        </div>
+
+        <div class="trust-meta fade-in">
+          <div class="trust-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            MIT License
+          </div>
+          <div class="trust-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+            Zero dependencies
+          </div>
+          <div class="trust-meta-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Drop-in installation
+          </div>
+        </div>
+
+        <div class="works-with fade-in">
+          <p class="works-with-title">Works with</p>
+          <div class="works-grid">
+            <div class="works-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+              Claude Code
+            </div>
+            <div class="works-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 18l6-6-6-6"/><path d="M8 6l-6 6 6 6"/></svg>
+              OpenCode
+            </div>
+            <div class="works-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Any instruction-file tool
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROBLEM (Step 3: The Problem) ===== -->
+    <section class="problem" id="problem">
+      <div class="container">
+        <div class="problem-header fade-in">
+          <p class="section-label">The problem</p>
+          <h2 class="section-title">What unchecked AI coding assistants do</h2>
+        </div>
+
+        <div class="problem-grid fade-in">
+          <div class="problem-item">
+            <span class="problem-num">1</span>
+            <span class="problem-text">Start coding before clarifying ambiguous requirements</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">2</span>
+            <span class="problem-text">Add unrequested features, abstractions, and "improvements"</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">3</span>
+            <span class="problem-text">Expand scope mid-task: refactor while fixing, "improve" while adding</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">4</span>
+            <span class="problem-text">Silently rename files, change APIs, or rewrite working code</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">5</span>
+            <span class="problem-text">Skip verification until after the mistake is already in the diff</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">6</span>
+            <span class="problem-text">Suppress errors without telling you</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">7</span>
+            <span class="problem-text">Push to version control or delete files without warning</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">8</span>
+            <span class="problem-text">Run destructive CLI commands or modify secrets with no safety gate</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">9</span>
+            <span class="problem-text">Ship incomplete or stub implementations and call them done</span>
+          </div>
+          <div class="problem-item">
+            <span class="problem-num">10</span>
+            <span class="problem-text">Pick arbitrarily when rules conflict, choosing helpfulness over safety</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== HOW IT WORKS (Step 3: Core Principles) ===== -->
+    <section class="how" id="how">
+      <div class="container">
+        <div class="how-header fade-in">
+          <p class="section-label">How it works</p>
+          <h2 class="section-title">Four core principles</h2>
+        </div>
+
+        <div class="principles-grid fade-in">
+          <article class="principle-card">
+            <div class="principle-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </div>
+            <h3 class="principle-name">Think before coding</h3>
+            <p class="principle-desc">State assumptions, surface ambiguities, present multiple interpretations. No silent decisions.</p>
+          </article>
+
+          <article class="principle-card">
+            <div class="principle-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 3a3 3 0 0 0-3 3v12a3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3H6a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3V6a3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3h12a3 3 0 0 0 3-3 3 3 0 0 0-3-3z"/></svg>
+            </div>
+            <h3 class="principle-name">Simplicity first</h3>
+            <p class="principle-desc">Minimum code that solves the problem. No speculative features, no unused abstractions.</p>
+          </article>
+
+          <article class="principle-card">
+            <div class="principle-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <h3 class="principle-name">Surgical changes</h3>
+            <p class="principle-desc">Touch only what you must. Match existing style. No scope creep hiding as cleanup.</p>
+          </article>
+
+          <article class="principle-card">
+            <div class="principle-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </div>
+            <h3 class="principle-name">Goal-driven execution</h3>
+            <p class="principle-desc">Define success criteria, loop until verified, report what changed and what remains unverified.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== FEATURES (Step 3: Feature Highlights) ===== -->
+    <section class="features" id="features">
+      <div class="container">
+        <div class="features-header fade-in">
+          <p class="section-label">What makes this different</p>
+          <h2 class="section-title">Beyond basic instructions</h2>
+        </div>
+
+        <div class="features-list fade-in">
+          <div class="feature-category">Core behavior</div>
+
+          <div class="feature-item featured">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Four Core Coding Principles</div>
+              <div class="feature-desc">Think before coding, prefer simplicity, make surgical changes, and define success through verification. These principles form the backbone that everything else builds on.</div>
+            </div>
+          </div>
+
+          <div class="feature-item featured">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Collaborative Working Model</div>
+              <div class="feature-desc">The human brings domain knowledge and architectural intent. The AI contributes speed, pattern recognition, critique, and exploration. Ideas are refined collaboratively before building.</div>
+            </div>
+          </div>
+
+          <div class="feature-item featured">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Order of Precedence</div>
+              <div class="feature-desc">Hard stops override everything unless you authorize. Explicit instruction overrides defaults. Safety overrides speed.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Three Named Operating Modes</div>
+              <div class="feature-desc">Default, ambiguity, and cleanup modes give the AI an explicit behavioral model instead of leaving choices to chance.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Wording Conventions (Must / Should / May)</div>
+              <div class="feature-desc">RFC-style rule weight removes ambiguity. Must and Never mean mandatory. Should and Prefer mean strong default. May means optional.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Shared Vocabulary / Interpretation Layer</div>
+              <div class="feature-desc">Defined terms like "trivial task," "minor ambiguity," and "working code" mean you and the AI start from the same definitions.</div>
+            </div>
+          </div>
+
+          <div class="feature-category">Safety and execution control</div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Scope Control for Existing Code</div>
+              <div class="feature-desc">Prevents touching adjacent code, expanding scope, rewriting working systems, or using cleanup as an excuse for unrelated changes.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Hard Stops with Rule Citation and Authorization Gate</div>
+              <div class="feature-desc">When the AI cannot proceed, it names the specific rule that triggered the stop, creating a verifiable audit trail around dangerous actions.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Verification by Task Type with Manual Fallback</div>
+              <div class="feature-desc">Bug fixes need reproduction. Features need interface checks. Refactors need before/after comparison. No automated tests? Define manual steps explicitly.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Broken Baseline Handling</div>
+              <div class="feature-desc">If the baseline is already broken, the AI says so before changing code. No pretending everything is verified when it is not.</div>
+            </div>
+          </div>
+
+          <div class="feature-category">Reporting and maintenance</div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Structured Post-Task Report</div>
+              <div class="feature-desc">After every non-trivial task: what changed, what was verified, what remains unverified, and problems noticed but left untouched.</div>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Documentation Rules</div>
+              <div class="feature-desc">Explain the why, not the what. Update docs when behavior changes. Avoid comments that merely repeat the code or rot faster than the implementation.</div>
+            </div>
+          </div>
+
+          <div class="feature-category">Deployment and reach</div>
+
+          <div class="feature-item">
+            <svg class="feature-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="feature-title">Full Multi-Dimensional Agnosticism</div>
+              <div class="feature-desc">Works regardless of programming language, framework, AI tool, OS, domain, or project type. No dependencies referenced. Keep the global file universal.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== BEFORE/AFTER (Step 3: Comparison) ===== -->
+    <section class="compare" id="compare">
+      <div class="container">
+        <div class="compare-header fade-in">
+          <p class="section-label">Illustrative example</p>
+          <h2 class="section-title">What the rules prevent vs. what they produce</h2>
+        </div>
+
+        <div class="compare-grid fade-in">
+          <div class="compare-panel compare-bad">
+            <div class="compare-panel-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+              Without CLAUDE.md
+            </div>
+            <div class="compare-body">
+              <span class="compare-line"><span class="comment">// You: "Fix the login bug"</span></span>
+              <span class="compare-line"></span>
+              <span class="compare-line"><span class="action">AI rewrites the entire auth module</span></span>
+              <span class="compare-line"><span class="action">AI adds rate limiting you didn't ask for</span></span>
+              <span class="compare-line"><span class="action">AI renames variables across 12 files</span></span>
+              <span class="compare-line"><span class="action">AI catches an error and suppresses it</span></span>
+              <span class="compare-line"><span class="action">AI runs git push automatically</span></span>
+              <span class="compare-line"></span>
+              <span class="compare-line"><span class="comment">// 47 files changed. Bug still present.</span></span>
+            </div>
+          </div>
+
+          <div class="compare-panel compare-good">
+            <div class="compare-panel-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              With CLAUDE.md
+            </div>
+            <div class="compare-body">
+              <span class="compare-line"><span class="comment">// You: "Fix the login bug"</span></span>
+              <span class="compare-line"></span>
+              <span class="compare-line"><span class="action">AI asks: "Is this the password or SSO flow?"</span></span>
+              <span class="compare-line"><span class="action">AI fixes the single validation function</span></span>
+              <span class="compare-line"><span class="action">AI reproduces the bug first, then makes it pass</span></span>
+              <span class="compare-line"><span class="action">AI reports: 1 file changed, verified, no side effects</span></span>
+              <span class="compare-line"></span>
+              <span class="compare-line"><span class="comment">// 1 file changed. Bug fixed. Verified.</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== COMPARISON TABLE (Step 4) ===== -->
+    <section class="compare-table-section" id="comparison">
+      <div class="container">
+        <div class="table-header fade-in">
+          <p class="section-label">How it differs</p>
+          <h2 class="section-title">Feature comparison</h2>
+        </div>
+
+        <div class="compare-table-wrap fade-in">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Karpathy</th>
+                <th>Bernstein</th>
+                <th>This repo</th>
+              </tr>
+            </thead>
+            <tbody>
+          <tr><td>Core coding rules</td><td><span class="table-check">Yes</span></td><td><span class="table-partial">Partial</span></td><td><span class="table-check">Refined</span></td></tr>
+          <tr><td>Collaborative partnership framing</td><td><span class="table-cross">No</span></td><td><span class="table-check">Yes</span></td><td><span class="table-check">Refined</span></td></tr>
+          <tr><td>Order of Precedence</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Operating modes</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Must/Should/May wording conventions</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Shared vocabulary / interpretation layer</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Existing-code scope discipline</td><td><span class="table-partial">Partial</span></td><td><span class="table-partial">Partial</span></td><td><span class="table-check">Formalized</span></td></tr>
+          <tr><td>Hard stops with rule citation</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Hard-stop explanation protocol</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Verification by task type</td><td><span class="table-cross">No</span></td><td><span class="table-partial">Partial</span></td><td><span class="table-check">Formalized</span></td></tr>
+          <tr><td>Verification fallback to manual steps</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Broken-baseline handling</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Structured post-task reporting</td><td><span class="table-cross">No</span></td><td><span class="table-cross">No</span></td><td><span class="table-check">New</span></td></tr>
+          <tr><td>Dedicated documentation rules</td><td><span class="table-cross">No</span></td><td><span class="table-partial">Partial</span></td><td><span class="table-check">Formalized</span></td></tr>
+          <tr><td>Full multi-dimensional agnosticism</td><td><span class="table-partial">Partial</span></td><td><span class="table-partial">Partial</span></td><td><span class="table-check">Made explicit</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== AGNOSTIC (Step 4) ===== -->
+    <section class="agnostic" id="agnostic">
+      <div class="container">
+        <div class="agnostic-header fade-in">
+          <p class="section-label">Works everywhere</p>
+          <h2 class="section-title">Fully agnostic by design</h2>
+        </div>
+
+        <div class="agnostic-grid fade-in">
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Programming language</div>
+              <div class="agnostic-value">Python, C, JS, TypeScript, C#, Java, Pascal, Rust…</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Framework</div>
+              <div class="agnostic-value">React, Django, Qt, bare-metal…</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Library</div>
+              <div class="agnostic-value">No dependencies referenced</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">AI tool</div>
+              <div class="agnostic-value">Claude Code, OpenCode, and adaptable to other instruction-file tools</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">OS</div>
+              <div class="agnostic-value">Windows, Linux, macOS</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Domain</div>
+              <div class="agnostic-value">Web, embedded, desktop, scripts, data</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Project type</div>
+              <div class="agnostic-value">New projects, legacy code, refactors</div>
+            </div>
+          </div>
+
+          <div class="agnostic-item">
+            <svg class="agnostic-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <div class="agnostic-label">Verification method</div>
+               <div class="agnostic-value">Automated tests, manual validation, reproducible checks, baseline comparison</div>
+             </div>
+           </div>
+         </div>
+       </div>
+     </section>
+
+    <!-- ===== FAQ (Step 4: Remove Doubt) ===== -->
+    <section class="faq" id="faq">
+      <div class="container">
+        <div class="faq-header fade-in">
+          <p class="section-label">Common questions</p>
+          <h2 class="section-title">FAQ</h2>
+        </div>
+
+        <div class="faq-list fade-in">
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Does this work with my AI tool?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Yes. It works with any tool that reads instruction files: CLAUDE.md, AGENTS.md, GEMINI.md. Works natively with Claude Code and OpenCode. For other tools, follow that tool's convention. The content stays the same, only the filename changes.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Does it add dependencies?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>No. Pure behavioral instructions in a Markdown file. Zero runtime impact. Zero dependencies. Zero configuration. It is a text file your AI tool reads before each session.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What if I disagree with a rule?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Override with explicit instruction. The framework respects your authority: explicit instruction always overrides defaults. You can also fork and modify the file to match your preferences.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Will it slow down my AI?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>No. It makes sessions faster by preventing rework. Every minute the AI spends asking before acting saves ten minutes undoing unwanted changes.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How is this different from a prompt?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Structure matters. Operating modes, precedence rules, hard stops, and shared vocabulary create consistent behavior that ad-hoc prompts cannot. A prompt says "be careful." This file defines exactly what careful means, when to stop, and what to report.</p>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Can I use it for my team?
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="faq-answer">
+              <p>Yes. Commit it to your repo as a project-level file. Everyone on the team gets the same guardrails and the same behavioral contract with their AI assistant. Consistency across developers, not just across sessions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA (Step 5: Make the Ask) ===== -->
+    <section class="cta-section" id="cta">
+      <div class="container">
+        <div class="fade-in">
+          <h2 class="cta-title">One file. 30 seconds. Every session better.</h2>
+          <p class="cta-sub">Install once. Benefit immediately. No configuration needed.</p>
+        </div>
+
+        <div class="cta-buttons fade-in">
+          <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic" class="btn btn-primary" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            View on GitHub
+          </a>
+          <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic/stargazers" class="btn btn-secondary" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Star the repo
+          </a>
+        </div>
+
+        <div class="cta-related fade-in">
+          <div class="cta-related-title">Also check out</div>
+          <a href="https://zeljkoavramovic.github.io/agentic-design-patterns/" class="cta-related-link" target="_blank" rel="noopener">Agentic Design Patterns</a>
+          <p class="cta-related-desc">Interactive tutorial for building intelligent AI systems. Covers core patterns, reasoning strategies, orchestration, infrastructure, and reliability controls.</p>
+        </div>
+
+        <div class="support-links fade-in">
+          <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic/stargazers" class="support-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Star
+          </a>
+          <a href="https://github.com/zeljkoavramovic/karpathy-bernstein-avramovic" class="support-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Share
+          </a>
+          <a href="https://buymeacoffee.com/cupofavra" class="support-link" target="_blank" rel="noopener">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Buy Me A Coffee
+          </a>
+        </div>
+
+        <div class="credits fade-in">
+          <a href="https://x.com/karpathy/status/2015883857489522876" target="_blank" rel="noopener">Andrej Karpathy</a> (LLM coding observations)
+          <a href="https://github.com/multica-ai/andrej-karpathy-skills" target="_blank" rel="noopener">Multica</a> (CLAUDE.md adaptation)
+          <a href="https://github.com/ThePassionateProgrammer" target="_blank" rel="noopener">David Scott Bernstein</a> (partnership-driven style)
+          <a href="https://github.com/zeljkoavramovic" target="_blank" rel="noopener">Zeljko Avramovic</a> (systematization and expansion)
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>MIT license. Use freely, improve openly, credit kindly.</p>
+      <p style="margin-top: 4px;">2026 Zeljko Avramovic</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile sidenav toggle
+    (function() {
+      var toggle = document.querySelector('.sidenav-toggle');
+      var sidenav = document.querySelector('.sidenav');
+      var overlay = document.querySelector('.sidenav-overlay');
+      if (!toggle || !sidenav || !overlay) return;
+
+      function openNav() {
+        sidenav.classList.add('open');
+        overlay.classList.add('open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+      function closeNav() {
+        sidenav.classList.remove('open');
+        overlay.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      toggle.addEventListener('click', function() {
+        if (sidenav.classList.contains('open')) closeNav();
+        else openNav();
+      });
+      overlay.addEventListener('click', closeNav);
+      sidenav.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeNav);
+      });
+    })();
+
+    // Tab toggle for install commands
+    (function() {
+      var tabs = document.querySelectorAll('.tab-btn');
+      var psCode = document.getElementById('install-ps');
+      var bashCode = document.getElementById('install-bash');
+
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) {
+            t.classList.remove('active');
+            t.setAttribute('aria-pressed', 'false');
+          });
+          this.classList.add('active');
+          this.setAttribute('aria-pressed', 'true');
+
+          if (this.dataset.tab === 'bash') {
+            psCode.style.display = 'none';
+            bashCode.style.display = 'block';
+          } else {
+            psCode.style.display = 'block';
+            bashCode.style.display = 'none';
+          }
+        });
+      });
+    })();
+
+    // Copy button
+    (function() {
+      var copyBtn = document.querySelector('.copy-btn');
+      if (!copyBtn) return;
+
+      copyBtn.addEventListener('click', function() {
+        var psCode = document.getElementById('install-ps');
+        var bashCode = document.getElementById('install-bash');
+        var activeCode = psCode.style.display !== 'none' ? psCode : bashCode;
+        var text = activeCode.textContent;
+
+        navigator.clipboard.writeText(text).then(function() {
+          copyBtn.classList.add('copied');
+          var span = copyBtn.querySelector('span');
+          var origText = span.textContent;
+          span.textContent = 'Copied';
+          setTimeout(function() {
+            copyBtn.classList.remove('copied');
+            span.textContent = origText;
+          }, 2000);
+        });
+      });
+    })();
+
+    // FAQ accordion
+    (function() {
+      var questions = document.querySelectorAll('.faq-question');
+      questions.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var item = this.parentElement;
+          var isOpen = item.classList.contains('open');
+
+          // Close all
+          document.querySelectorAll('.faq-item.open').forEach(function(openItem) {
+            openItem.classList.remove('open');
+            openItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          });
+
+          // Toggle clicked
+          if (!isOpen) {
+            item.classList.add('open');
+            this.setAttribute('aria-expanded', 'true');
+          }
+        });
+      });
+    })();
+
+    // Fade-in on scroll via IntersectionObserver
+    (function() {
+      var els = document.querySelectorAll('.fade-in');
+      if (!('IntersectionObserver' in window)) {
+        els.forEach(function(el) { el.classList.add('visible'); });
+        return;
+      }
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+      els.forEach(function(el) { observer.observe(el); });
+    })();
+
+    // Nav scroll spy — highlight active section link
+    (function() {
+      var navLinks = document.querySelectorAll('.sidenav a[href^="#"]');
+      var sections = [];
+      navLinks.forEach(function(link) {
+        var id = link.getAttribute('href').substring(1);
+        var el = document.getElementById(id);
+        if (el) sections.push({ id: id, el: el, link: link });
+      });
+
+      function onScroll() {
+        var scrollY = window.scrollY + 80;
+        var current = sections[0];
+        for (var i = 0; i < sections.length; i++) {
+          if (sections[i].el.offsetTop <= scrollY) current = sections[i];
+        }
+        navLinks.forEach(function(l) { l.classList.remove('active'); });
+        if (current) current.link.classList.add('active');
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+
+    // Install now button — highlight install box instead of scrolling
+    (function() {
+      var btn = document.querySelector('a[href="#install"].btn-secondary');
+      var box = document.getElementById('install');
+      if (!btn || !box) return;
+
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        box.classList.remove('highlight');
+        void box.offsetWidth; // force reflow to restart animation
+        box.classList.add('highlight');
+      });
+    })();
+  </script>
+</body>
+</html>
