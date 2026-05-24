@@ -1,5 +1,7 @@
 # CLAUDE.md That Works
 
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fzeljkoavramovic.github.io%2Fkarpathy-bernstein-avramovic%2F&label=landing%20page)](https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/)
+
 One file. Zero dependencies. Discipline every AI coding session.
 
 
@@ -183,14 +185,16 @@ for safer, smaller, verifiable AI coding changes"]
 **Windows (PowerShell):**
 
 ```powershell
-mkdir -Force "$HOME\.claude" > $null; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md" -OutFile "$HOME\.claude\CLAUDE.md"
+mkdir -Force "$HOME\.claude" > $null; cp "$HOME\.claude\CLAUDE.md" "$HOME\.claude\CLAUDE.backup.md" 2>$null; iwr "https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md" -OutFile "$HOME\.claude\CLAUDE.md"
 ```
 
 **Linux / macOS:**
 
 ```bash
-mkdir -p ~/.claude && curl -fsSL https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md -o ~/.claude/CLAUDE.md
+mkdir -p ~/.claude; cp ~/.claude/CLAUDE.md ~/.claude/CLAUDE.backup.md 2>/dev/null; curl -fsSL https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md -o ~/.claude/CLAUDE.md
 ```
+
+If `~/.claude/CLAUDE.md` already exists, it will be backed up to `CLAUDE.backup.md` before being overwritten.
 
 Works natively with **Claude Code** and **OpenCode**. For other AI coding tools, follow that tool's instruction file convention (e.g., `AGENTS.md`, `GEMINI.md`) - the content is the same, the filename depends on the tool.
 
