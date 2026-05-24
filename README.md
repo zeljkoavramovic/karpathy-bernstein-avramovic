@@ -1,6 +1,6 @@
 # CLAUDE.md That Works
 
-One file. Zero dependencies. Discipline every AI coding session, on every platform.
+One file. Zero dependencies. Discipline every AI coding session.
 
 
 
@@ -180,19 +180,19 @@ for safer, smaller, verifiable AI coding changes"]
 
 ## Installation
 
-**Windows:**
+**Windows (PowerShell):**
 
-```text
-C:\Users\%USERNAME%\.claude\CLAUDE.md
+```powershell
+mkdir -Force "$HOME\.claude" > $null; Invoke-WebRequest -Uri "https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md" -OutFile "$HOME\.claude\CLAUDE.md"
 ```
 
 **Linux / macOS:**
 
-```text
-~/.claude/CLAUDE.md
+```bash
+mkdir -p ~/.claude && curl -fsSL https://raw.githubusercontent.com/zeljkoavramovic/karpathy-bernstein-avramovic/master/CLAUDE.md -o ~/.claude/CLAUDE.md
 ```
 
-Just copy the file. That's it.
+Works natively with **Claude Code** and **OpenCode**. For other AI coding tools, follow that tool's instruction file convention (e.g., `AGENTS.md`, `GEMINI.md`) - the content is the same, the filename depends on the tool.
 
 
 
