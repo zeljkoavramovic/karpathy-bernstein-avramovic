@@ -12,7 +12,9 @@ The global `CLAUDE.md` that makes AI coding assistants actually behave, so every
 
 Works natively with **Claude Code** and **OpenCode**. For other agent tools, you can reuse the same framework through their preferred instruction file convention, such as `AGENTS.md` or `GEMINI.md`. No setup. No dependencies. One file.
 
-Heavily inspired by [Andrej Karpathy's](https://x.com/karpathy/status/2015883857489522876) observations on LLM coding pitfalls ([Multica adaptation](https://github.com/multica-ai/andrej-karpathy-skills)), and by [David Scott Bernstein's](https://github.com/ThePassionateProgrammer/knowledge-base-starter) partnership-driven working-agreement style. Then significantly extended, systematized, and refined for real-world use.
+Heavily inspired by **[Andrej Karpathy's](https://x.com/karpathy/status/2015883857489522876)** observations on LLM coding pitfalls (**[Multica adaptation](https://github.com/multica-ai/andrej-karpathy-skills)**), and by **[David Scott Bernstein's](https://github.com/ThePassionateProgrammer/knowledge-base-starter)** partnership-driven working-agreement style. Then significantly extended, systematized, and refined for real-world use.
+
+There is also a **[single-page walkthrough](https://zeljkoavramovic.github.io/karpathy-bernstein-avramovic/)** - with visual diagrams, side navigation, before/after comparison, feature comparison table, FAQ accordion, and one-click install commands.
 
 
 
