@@ -133,9 +133,13 @@
       flex-direction: column;
       flex: 1;
       overflow-y: auto;
-      scrollbar-width: none;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
     }
-    .sidenav-links::-webkit-scrollbar { display: none; }
+    .sidenav-links::-webkit-scrollbar { width: 6px; }
+    .sidenav-links::-webkit-scrollbar-track { background: transparent; }
+    .sidenav-links::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    .sidenav-links::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     .sidenav-links a {
       color: var(--text-muted);
       font-size: 13px;
